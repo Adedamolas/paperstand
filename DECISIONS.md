@@ -50,3 +50,18 @@ Judgment calls where the spec is silent or ambiguous. Newest last.
 ## 2026-10-03: M0 canvas renders continuously
 - **Decision:** M0 uses `frameloop="always"` with a placeholder sheet so the HUD and FPS probe have
   real numbers. The stand switches to `frameloop="demand"` in M4 (spec Section 8).
+
+## 2026-10-03: James's Section 15 answers
+- **Photos at launch: ON.** `ENABLE_PHOTOS=true`. The spec 4.6 rules still apply: lead stories
+  only, grayscale halftone, "Photo: {Source}" credit, suppressed on violence/tragedy keywords.
+- **Source list:** James asked Claude to find sources. Candidate list and probe results are in
+  `docs/SOURCES.md`, pending his approval of the final mix.
+- **NewsData.io fallback: wanted.** James asked to see the terms first. Findings are in
+  `docs/SOURCES.md`. The pipeline stays fully functional without `NEWSDATA_API_KEY`.
+- **3D assets:** no commission. Use free CC0 models (Poly Haven) plus procedural geometry where
+  nothing suitable exists (umbrella). Candidates in `docs/ASSETS.md`.
+- **Sound:** CC0 sounds from the internet (Freesound CC0 via Openverse). Candidates in
+  `docs/ASSETS.md`; each chosen file gets logged with its source URL.
+- **Archive retention:** 90 days.
+- **Analytics:** Vercel Web Analytics.
+- **Name and domain:** pending (James says picked; waiting on the actual name and domain).
