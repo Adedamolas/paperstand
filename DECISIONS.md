@@ -124,3 +124,32 @@ Judgment calls where the spec is silent or ambiguous. Newest last.
   Space or ArrowUp turns over, F folds. In the lab, "put back" folds the paper and lays it back
   along an arc as a preview of PICK/PUTBACK (the real transition belongs to the M4 stand).
 - Reduced motion in the lab: a 250ms fold with a slight scale pulse instead of the full arc.
+
+## 2026-10-03: Side grips wrap a vertical-axis cylinder (James's feedback)
+- **Feedback:** the first tune read as a sheet held at its top and bottom.
+- **References:** Wikimedia Commons photos of people reading newspapers (cafe, train, bench,
+  Nigerian vendors). Common pattern: hands on the left and right edges a little above centre; the
+  sheet curves around a vertical axis so the middle bows away and the vertical edges stay
+  straight; the top corners flop over; the bottom hangs.
+- **Decision:** grip sag is now an inextensible arc around the vertical axis (bow depth `sag` at
+  the centre, hands draw closer as it deepens) instead of the spec's parabolic z offset; droop
+  around the horizontal axis is cut to a light slump (0.14 rad) with the bottom hanging straight;
+  corner curl favours the top corners (`curlBottom` 0.25). Key light moved to the upper left with
+  less wrap so the bow shades across the width.
+- **Why:** curvature in one direction stiffens a sheet against bending in the other, which is
+  why a side-held broadsheet stays upright. The spec's formula is kept in spirit (sag bows the span
+  between the hands away from the viewer).
+
+## 2026-10-03: Specimen page redesign and OFL fonts
+- **Feedback:** the layout and type did not look like a Nigerian paper.
+- **Decision:** the lab specimen pages now follow the late-90s/2000s Nigerian daily look: colour
+  teaser strap, ears with weather and price, misregistered blackletter masthead, red kicker,
+  full-width Anton banner fitted to two lines, colour lead photo, coloured teaser rail, crowded
+  notices, a colour ad for a fictional brand, and a green sports back page with a league table.
+  Every block has a fixed vertical budget, so nothing overflows.
+- **Fonts:** Anton, Oswald, UnifrakturMaguntia, Source Serif 4 (all OFL, licences committed) live
+  in `public/fonts/` so the browser lab can load them; the M3 pipeline will read the same files
+  rather than keeping a second copy in `pipeline/fonts/`.
+- **FontFace family names** are plain identifiers (`PaperstandBody` etc.): Firefox parses the
+  family as CSS and threw a SyntaxError on "Source Serif 4". Fonts that fail to load now fall back
+  to system fonts instead of breaking the page.

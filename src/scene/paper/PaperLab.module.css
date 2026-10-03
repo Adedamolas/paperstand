@@ -34,3 +34,16 @@
   font-size: 12px;
   font-style: italic;
 }
+
+.flat {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.flatWrap {
+  position: fixed;
+  inset: 0;
+  overflow: auto;
+  background: hsl(var(--wood-dark));
+}

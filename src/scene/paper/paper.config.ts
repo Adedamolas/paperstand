@@ -10,7 +10,8 @@ export type PaperConfig = {
   /** Grip line height above centre, as a fraction of H. */
   gripY: number;
 
-  // Rest shape while held
+  // Rest shape while held (side grips: the sheet wraps a vertical-axis cylinder)
+  /** Bow depth at the centre between the hands, in units of W. */
   sag: number;
   droop: number;
   /** Bottom region bends with droop * droopBottom (negative = toward viewer). */
@@ -18,6 +19,8 @@ export type PaperConfig = {
   /** How much droop weakens near the gripped edges (0 = none, 1 = full at edges). */
   droopEdgeRelief: number;
   curl: number;
+  /** Bottom corners curl by curl * curlBottom (top corners flop the most). */
+  curlBottom: number;
 
   // Motion response
   /** Extra droop per unit of grip speed. */
@@ -67,11 +70,12 @@ export type PaperConfig = {
 
 const base: PaperConfig = {
   gripY: 0.1,
-  sag: 0.035,
-  droop: 0.42,
-  droopBottom: 0.3,
-  droopEdgeRelief: 0.45,
-  curl: 0.035,
+  sag: 0.085,
+  droop: 0.14,
+  droopBottom: 0.05,
+  droopEdgeRelief: 0,
+  curl: 0.05,
+  curlBottom: 0.25,
   droopSpeed: 0.12,
   air: 0.05,
   flapImpulse: 0.05,

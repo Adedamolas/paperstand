@@ -10,7 +10,7 @@ import { Hud } from '@/src/ui/Hud';
 import { HudProbe } from '@/src/ui/HudProbe';
 import { TiltChip } from '@/src/ui/TiltChip';
 import { HeldCamera } from '../CameraRig';
-import { createGrainTexture, createMockPages } from './mockPage';
+import { createGrainTexture, createMockPages, disposePages } from './mockPage';
 import { Paper, PaperControls } from './Paper';
 import { PAPER_CONFIG, reducedMotion, type PaperConfig } from './paper.config';
 import styles from './PaperLab.module.css';
@@ -18,11 +18,12 @@ import styles from './PaperLab.module.css';
 // Slider ranges for every tunable. Anything missing falls back to 0..2x its default.
 const RANGES: Partial<Record<string, [number, number, number]>> = {
   gripY: [-0.3, 0.4, 0.01],
-  sag: [0, 0.2, 0.001],
+  sag: [0, 0.25, 0.001],
   droop: [0, 1.5, 0.01],
   droopBottom: [-1, 1.5, 0.01],
   droopEdgeRelief: [0, 1, 0.01],
   curl: [-0.15, 0.15, 0.001],
+  curlBottom: [-1, 1.5, 0.01],
   droopSpeed: [0, 1, 0.01],
   air: [0, 0.3, 0.001],
   flapImpulse: [0, 0.3, 0.001],
@@ -72,7 +73,7 @@ function unflatten(flat: Flat, base: PaperConfig): PaperConfig {
 
 function schemaFor(flat: Flat) {
   const groups: Record<string, string[]> = {
-    shape: ['gripY', 'sag', 'droop', 'droopBottom', 'droopEdgeRelief', 'curl'],
+    shape: ['gripY', 'sag', 'droop', 'droopBottom', 'droopEdgeRelief', 'curl', 'curlBottom'],
     motion: ['droopSpeed', 'air', 'flapImpulse', 'flapK', 'flapSpeed', 'flapMax', 'dragScale', 'dragLimit', 'lagTilt', 'flickVelocity', 'tiltRange'],
     breeze: ['breeze', 'breezeScale', 'breezeSpeed'],
     'fold & turn': ['creaseRadius', 'foldClosure', 'turnCurl', 'turnMs', 'foldMs'],
@@ -124,18 +125,22 @@ function LabScene({ tier, reduced }: { tier: 'low' | 'mid' | 'high'; reduced: bo
     config.current = unflatten(values, base);
   }, [values, base]);
 
-  const textures = useMemo(() => {
-    const width = tier === 'low' ? 1024 : 1536;
-    return { ...createMockPages(width, tierCfg.anisotropy), grain: createGrainTexture() };
+  const [textures, setTextures] = useState<Awaited<ReturnType<typeof createMockPages>> | null>(null);
+  const grain = useMemo(() => createGrainTexture(), []);
+  useEffect(() => () => grain.dispose(), [grain]);
+  useEffect(() => {
+    let alive = true;
+    let made: Awaited<ReturnType<typeof createMockPages>> | null = null;
+    createMockPages(tier === 'low' ? 1024 : 1536, tierCfg.anisotropy).then((t) => {
+      made = t;
+      if (alive) setTextures(t);
+      else disposePages(t);
+    });
+    return () => {
+      alive = false;
+      if (made) disposePages(made);
+    };
   }, [tier, tierCfg.anisotropy]);
-  useEffect(
-    () => () => {
-      textures.front.dispose();
-      textures.back.dispose();
-      textures.grain.dispose();
-    },
-    [textures],
-  );
 
   const bind = useDrag(
     ({ movement: [mx, my], last, velocity: [vx, vy], direction: [, dy], tap }) => {
@@ -183,14 +188,16 @@ function LabScene({ tier, reduced }: { tier: 'low' | 'mid' | 'high'; reduced: bo
           gl={{ antialias: tierCfg.antialias, powerPreference: 'high-performance' }}
         >
           <HeldCamera />
-          <Paper
-            controls={controls}
-            config={config}
-            front={textures.front}
-            back={textures.back}
-            grain={textures.grain}
-            segments={tierCfg.segments}
-          />
+          {textures ? (
+            <Paper
+              controls={controls}
+              config={config}
+              front={textures.front}
+              back={textures.back}
+              grain={grain}
+              segments={tierCfg.segments}
+            />
+          ) : null}
           <HudProbe />
         </Canvas>
       </div>
@@ -205,8 +212,29 @@ function LabScene({ tier, reduced }: { tier: 'low' | 'mid' | 'high'; reduced: bo
   );
 }
 
+/** `?flat=front|back` shows the page texture flat, for reviewing the layout itself. */
+function FlatPage({ side }: { side: 'front' | 'back' }) {
+  const [src, setSrc] = useState<string | null>(null);
+  useEffect(() => {
+    let alive = true;
+    createMockPages(1536, 1).then(({ canvases }) => alive && setSrc(canvases[side].toDataURL('image/png')));
+    return () => {
+      alive = false;
+    };
+  }, [side]);
+  return src ? (
+    <div className={styles.flatWrap}>
+      {/* eslint-disable-next-line @next/next/no-img-element -- a data URL from a canvas */}
+      <img src={src} alt={`Specimen ${side} page`} className={styles.flat} />
+    </div>
+  ) : null;
+}
+
 export default function PaperLab() {
   const renderTier = useApp((s) => s.renderTier);
+  const [flat] = useState(() =>
+    typeof window === 'undefined' ? null : (new URLSearchParams(window.location.search).get('flat') as 'front' | 'back' | null),
+  );
   const [reduced, setReduced] = useState(false);
 
   useEffect(() => {
@@ -220,6 +248,8 @@ export default function PaperLab() {
     mq.addEventListener('change', update);
     return () => mq.removeEventListener('change', update);
   }, []);
+
+  if (flat === 'front' || flat === 'back') return <FlatPage side={flat} />;
 
   return (
     <main className={styles.lab}>

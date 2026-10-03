@@ -26,7 +26,11 @@ export function HeldCamera() {
   useLayoutEffect(() => {
     const camera = get().camera as PerspectiveCamera;
     camera.fov = CAMERA_FOV;
-    camera.position.set(0, 0, heldDistance(size.width / size.height));
+    const d = heldDistance(size.width / size.height);
+    // Lab only: ?view=<degrees> orbits the camera to inspect the paper's 3D shape.
+    const view = Number(new URLSearchParams(window.location.search).get('view') ?? 0);
+    const a = MathUtils.degToRad(view);
+    camera.position.set(Math.sin(a) * d, view ? d * 0.25 : 0, Math.cos(a) * d);
     camera.lookAt(0, 0, 0);
     camera.updateProjectionMatrix();
   }, [get, size.width, size.height]);

@@ -16,6 +16,7 @@ uniform float uDroop;
 uniform float uDroopBottom;
 uniform float uDroopEdgeRelief;
 uniform float uCurl;
+uniform float uCurlBottom;
 uniform float uFlapA;
 uniform float uFlapPhase;
 uniform float uFlapK;
@@ -120,10 +121,19 @@ vec3 paperDeform(vec2 p) {
   float x2 = xn * xn;
   float wx = 1.0 - uDroopEdgeRelief * x2;
 
+  // Grip sag: held at the side edges, the sheet wraps a cylinder around the vertical axis, so
+  // the middle bows away and the vertical edges stay straight. uSag is the bow depth at the
+  // centre; the arc is inextensible, so the hands draw slightly closer together as it deepens.
+  float kappa = max(8.0 * uSag * pHeld / (uW * uW), 1e-4);
+  float halfW = uW * 0.5;
+  vec3 arc = vec3(sin(kappa * x) / kappa, 0.0, -(cos(kappa * x) - cos(kappa * halfW)) / kappa);
+  vec3 nArc = vec3(-sin(kappa * x), 0.0, cos(kappa * x));
+
+  // Vertical strip bend (droop, fold crease, turn curl), riding on the arc.
   vec2 st = paperStrip(t, wx);
   float theta = paperTheta(t, wx);
-  vec3 pos = vec3(x, pGy + st.x, st.y);
-  vec3 n = vec3(0.0, sin(theta), cos(theta));
+  vec3 pos = arc + vec3(0.0, pGy + st.x, 0.0) + nArc * st.y;
+  vec3 n = vec3(0.0, sin(theta), 0.0) + nArc * cos(theta);
 
   // Free-region weight: 0 on the grip line, 1 at the far edges.
   float h = uH * 0.5;
@@ -133,12 +143,9 @@ vec3 paperDeform(vec2 p) {
   float disp = 0.0;
   float held = pHeld;
 
-  // Grip sag: the span between the hands bows away from the viewer.
-  disp -= uSag * held * (1.0 - x2);
-
-  // Corner curl: corners far from the grips curl toward the viewer.
-  float corner = smoothstep(0.4, 1.0, abs(xn)) * smoothstep(0.35 * uH, 0.62 * uH, abs(t));
-  disp += uCurl * held * corner * corner;
+  // Corner curl: free corners flop toward the viewer, the top ones (above the hands) most.
+  float corner = smoothstep(0.35, 1.0, abs(xn)) * smoothstep(0.3 * uH, 0.62 * uH, abs(t));
+  disp += uCurl * held * corner * corner * (t > 0.0 ? 1.0 : uCurlBottom);
 
   // Flap: a travelling wave on the free regions.
   disp += uFlapA * held * wf * sin(uFlapK * d - uFlapPhase);
