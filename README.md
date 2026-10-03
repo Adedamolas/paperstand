@@ -1,36 +1,27 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Paperstand
 
-## Getting Started
+The Nigerian roadside newspaper stand, on the web. Today's real Nigerian news laid out as
+physical newsprint: pick a paper off the vendor's table, hold it, feel it flop and flap.
 
-First, run the development server:
+Part 2 of the Nigerian nostalgia series, after [crown caps](https://github.com/Adedamolas/crown-caps).
+Built by James (DarkDev).
+
+## Develop
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+pnpm dev            # http://localhost:3000  (add ?hud=1 for the perf HUD, ?tier=low to force a tier)
+pnpm test           # vitest
+pnpm check          # typecheck + lint + build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Copy `.env.example` to `.env.local` as needed. The client reads only the edition manifest and
+images from the CDN; only the pipeline touches the database.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Docs
+- [`docs/PAPERSTAND_SPEC.md`](docs/PAPERSTAND_SPEC.md): the build spec (source of truth)
+- [`PROGRESS.md`](PROGRESS.md): milestone checklist and gate reports
+- [`DECISIONS.md`](DECISIONS.md): judgment calls
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+All stories are credited and linked to their publishers. Paperstand is not affiliated with any
+publisher, and its mastheads are fictional.
