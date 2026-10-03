@@ -1,0 +1,24 @@
+.chip {
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid hsl(var(--newsprint) / 0.35);
+  border-radius: 16px;
+  background: hsl(var(--wood-dark) / 0.75);
+  color: hsl(var(--newsprint));
+  font: 500 13px/1 var(--font-serif), Georgia, serif;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-press) var(--ease-out);
+}
+
+.chip:active {
+  transform: scale(0.97);
+}
+
+.chip[aria-pressed='true'] {
+  border-color: hsl(var(--newsprint) / 0.8);
+  background: hsl(var(--newsprint));
+  color: hsl(var(--ink));
+}

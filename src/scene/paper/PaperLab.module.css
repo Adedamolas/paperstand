@@ -1,0 +1,36 @@
+.lab {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(120% 80% at 50% 20%, hsl(30 22% 34%), hsl(var(--wood-dark)) 70%);
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.bar {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  pointer-events: none;
+}
+
+.bar > * {
+  pointer-events: auto;
+}
+
+.hint {
+  color: hsl(var(--newsprint) / 0.75);
+  font-size: 12px;
+  font-style: italic;
+}

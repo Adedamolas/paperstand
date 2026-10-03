@@ -10,22 +10,22 @@ Checklist from spec Section 12. One box per acceptance criterion. Gate reports a
 - [x] Empty R3F canvas
 - [x] Perf HUD (`?hud=1`)
 - [x] Tier detection skeleton
-- [ ] **Accept:** preview URL loads on a phone
+- [x] **Accept:** preview URL loads on a phone
 - [ ] **Accept:** HUD shows numbers
 - [x] **Accept:** CI is green
 
 ## M1: Paper Lab
-- [ ] `/lab/paper` with a placeholder newspaper texture
-- [ ] Deformation layers: fold, grip sag, droop, corner curl, flap, breeze, turn
-- [ ] Finite-difference normals; shared `paper.deform.glsl`
-- [ ] Springs (grip, body, flap, sag/droop)
-- [ ] Material: wrap Lambert, show-through, grain, `gl_FrontFacing`, mipmaps, anisotropy
-- [ ] Fold and unfold, TURNOVER, idle breeze
-- [ ] Gyro opt-in chip (iOS permission from a tap)
-- [ ] Reduced motion
-- [ ] leva controls (dev only) and "Copy config"
+- [x] `/lab/paper` with a placeholder newspaper texture
+- [x] Deformation layers: fold, grip sag, droop, corner curl, flap, breeze, turn
+- [x] Finite-difference normals; shared `paper.deform.glsl`
+- [x] Springs (grip, body, flap, sag/droop)
+- [x] Material: wrap Lambert, show-through, grain, `gl_FrontFacing`, mipmaps, anisotropy
+- [x] Fold and unfold, TURNOVER, idle breeze
+- [x] Gyro opt-in chip (iOS permission from a tap)
+- [x] Reduced motion
+- [x] leva controls (dev only) and "Copy config"
 - [ ] Tier presets, tested with `?tier=low`
-- [ ] `/lab/*` gated by `LAB_KEY` in production, `noindex`
+- [x] `/lab/*` gated by `LAB_KEY` in production, `noindex`
 - [ ] **Accept:** held FPS meets targets on reference devices (55 high, 30 low)
 - [ ] **Accept:** no tearing or normal artifacts at the crease
 - [ ] **Accept:** turnover is clean

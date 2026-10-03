@@ -65,3 +65,62 @@ Judgment calls where the spec is silent or ambiguous. Newest last.
 - **Archive retention:** 90 days.
 - **Analytics:** Vercel Web Analytics.
 - **Name and domain:** pending (James says picked; waiting on the actual name and domain).
+
+## 2026-10-03: Shaders live in `.glsl.ts` string modules
+- **Decision:** `paper.deform.glsl.ts`, `paper.vert.glsl.ts`, `paper.frag.glsl.ts` export their GLSL
+  as strings. `material.ts` concatenates the deformation chunk in front of the vertex shader and
+  exports `paperVertexShader` for reuse by a future depth material.
+- **Why:** Turbopack's built-in `type: 'raw'` rule compiled `import x from './a.glsl'` to `undefined`
+  in Next 16.3.8, and `raw-loader` would be a non-spec dependency. String modules need no bundler
+  config and work in vitest too. Still one shared deformation chunk, as spec 6.2 asks.
+
+## 2026-10-03: Paper deformation as an integrated bend angle
+- **Decision:** droop, the fold crease and the TURNOVER curl are one bend-angle function theta(t)
+  integrated along the sheet from the grip line (midpoint rule, 6 to 8 steps per segment). Sag,
+  curl, flap, air drag and breeze push along the resulting strip normal.
+- **Why:** integrating the angle keeps the sheet inextensible, so a big droop or the fold never
+  stretches the printed page. The crease is the same curve with a step of alpha spread over the
+  arc length of the crease radius, so it is a true small-radius cylinder, not a hinge.
+- **Fold closure:** 0.97 of pi, so the fold never closes perfectly and keeps a slight bulge.
+
+## 2026-10-03: TURNOVER rotates about the centre, in two halves
+- **Decision:** a turn rotates the sheet about its horizontal centre line. The held shape (sag,
+  droop, curl, flap, grip offset) fades to flat as the sheet goes edge-on, then the second half runs
+  in the mirrored frame (material y reversed) and the held shape rebuilds facing the viewer. The
+  sheet curves into a C mid-turn so the free halves trail.
+- **Why:** a rigid rotation about the grip line left the back page bowing toward the viewer,
+  shifted up and visually bigger. This way the back page ends in exactly the front page's pose.
+- **Back page orientation:** a flip about the horizontal axis would show the back page upside
+  down, so the back texture is sampled with v reversed. Show-through samples the same physical
+  point, so it stays physically consistent.
+
+## 2026-10-03: Extra mesh rows around the fold line
+- **Decision:** the paper mesh is a PlaneGeometry-style grid plus 8 extra rows packed within 2.4%
+  of H around y = 0.
+- **Why:** the crease radius (0.4% of H) is far smaller than a grid cell at any tier, so without
+  extra rows the fold renders as one long hinge band with smeared normals. Cost: 8 rows of
+  segX + 1 vertices.
+
+## 2026-10-03: Flap impulse from grip acceleration
+- **Decision:** the flap spring gets an impulse from the change in grip velocity each frame, not
+  the velocity itself. Air drag (leading edges pushed back) handles steady motion.
+- **Why:** a velocity impulse every frame pumps energy in during steady drags and the flap
+  saturates. Acceleration makes starts, stops and shakes flap, which is what real paper does.
+
+## 2026-10-03: leva is loaded only by /lab/paper
+- **Decision:** leva is a devDependency imported only from the lab chunk (`next/dynamic`), so it is
+  never in `/` or any user-facing route. It does ship in the key-gated production `/lab/paper` so
+  James can tune on his phone against production.
+- **Cost:** about 70KB gzip, lab route only.
+
+## 2026-10-03: /lab gating
+- **Decision:** `proxy.ts` returns 404 for `/lab/*` when `VERCEL_ENV=production` unless `?key=`
+  matches `LAB_KEY`; a match sets an httpOnly cookie scoped to `/lab` for 30 days. Local dev and
+  preview deploys are open (previews already sit behind Vercel login). `X-Robots-Tag: noindex`
+  plus `robots` metadata on the lab layout.
+
+## 2026-10-03: Lab conveniences
+- `?fold=0..1&turn=0..2` jumps straight to a pose; `?reduced=1` forces reduced motion; keyboard
+  Space or ArrowUp turns over, F folds. In the lab, "put back" folds the paper and lays it back
+  along an arc as a preview of PICK/PUTBACK (the real transition belongs to the M4 stand).
+- Reduced motion in the lab: a 250ms fold with a slight scale pulse instead of the full arc.
