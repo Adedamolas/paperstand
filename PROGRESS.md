@@ -6,13 +6,13 @@ Checklist from spec Section 12. One box per acceptance criterion. Gate reports a
 - [x] Repo, tooling (Next 16, TS strict, pnpm, ESLint, vitest)
 - [x] `CLAUDE.md`, `PROGRESS.md`, `DECISIONS.md`
 - [x] CI workflow (typecheck, lint, test, build)
-- [ ] Vercel preview deploy
+- [x] Vercel preview deploy
 - [x] Empty R3F canvas
 - [x] Perf HUD (`?hud=1`)
 - [x] Tier detection skeleton
 - [ ] **Accept:** preview URL loads on a phone
 - [ ] **Accept:** HUD shows numbers
-- [ ] **Accept:** CI is green
+- [x] **Accept:** CI is green
 
 ## M1: Paper Lab
 - [ ] `/lab/paper` with a placeholder newspaper texture
@@ -111,3 +111,32 @@ Checklist from spec Section 12. One box per acceptance criterion. Gate reports a
 ---
 
 # Gate reports
+
+## M0 report (2026-10-03)
+
+**Built:** Next 16 app shell; CSS table skeleton plus a server-rendered edition stamp (WAT);
+R3F canvas (lazy-loaded) with a placeholder sheet; tier detection (detect-gpu, deviceMemory,
+Save-Data, effectiveType, `?tier=` override, 2s FPS probe); dev HUD at `?hud=1`; WAT helpers with
+tests; CI (typecheck, lint, test, build); Vercel project connected to GitHub.
+
+**URLs**
+- Public: https://paperstand.vercel.app (add `?hud=1`)
+- PR preview (Vercel login required): https://paperstand-git-m0-foundation-adedamolas-projects-f4d6018e.vercel.app
+- PR: https://github.com/Adedamolas/paperstand/pull/1
+
+**What James should test on his phone**
+1. Open https://paperstand.vercel.app/?hud=1. You should see a striped canopy, a wooden table, a
+   swaying cream sheet, and the edition stamp bottom right.
+2. Check that the HUD shows non-zero fps, calls, tris, the detected tier, and your GPU name. Send
+   a screenshot of the HUD; the numbers become the baseline for M1.
+3. Repeat with `?hud=1&tier=low`; the tier should read `low*`.
+
+**Numbers**
+- Initial JS on `/`: 172KB gzip (budget 320KB). three.js and detect-gpu are not in it.
+- HUD (headless SwiftShader, desktop): tier `mid`, DPR 1. Real-device numbers pending James's phone.
+
+**Known issues**
+- The placeholder sheet is not yet fitted analytically to the viewport (M1, spec 6.5).
+- detect-gpu fetches benchmark data from unpkg; to be self-hosted before launch (DECISIONS.md).
+- Vercel functions default to `iad1`. Pages are mostly served from the CDN cache; revisit the
+  region when the revalidate webhook lands (M2/M3).
