@@ -9,12 +9,16 @@
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
-    "check": "pnpm typecheck && pnpm lint && pnpm build"
+    "check": "pnpm typecheck && pnpm lint && pnpm build",
+    "pipeline:run": "tsx pipeline/run.ts",
+    "pipeline:dry": "tsx pipeline/run.ts --dry"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.9",
     "@react-three/fiber": "^9.8.1",
     "@use-gesture/react": "^10.3.1",
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/blob": "^2.8.0",
     "detect-gpu": "^5.0.70",
     "next": "16.3.8",
     "react": "19.2.8",
@@ -24,12 +28,18 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@napi-rs/canvas": "^1.0.10",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/three": "^0.186.0",
     "eslint": "^9",
     "eslint-config-next": "16.3.8",
+    "fast-xml-parser": "^5.11.2",
+    "leva": "^0.10.1",
+    "p-limit": "^7.3.3",
+    "sharp": "^0.35.5",
+    "tsx": "^4.23.15",
     "typescript": "^5",
     "vitest": "^5.0.3"
   },

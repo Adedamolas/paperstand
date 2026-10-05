@@ -40,3 +40,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# pipeline dev output
+/.pipeline-out
+
+# design references (third-party images; kept local, never published)
+/references
