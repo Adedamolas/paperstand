@@ -32,49 +32,49 @@ Checklist from spec Section 12. One box per acceptance criterion. Gate reports a
 - [ ] **HUMAN GATE 1:** James signs off "feels like real paper"; tuned values committed
 
 ## M2: News pipeline
-- [ ] `pipeline/probe.ts` and `pipeline/probe-report.md`
-- [ ] Ingest with etiquette (UA, conditional GET, timeout, concurrency 4, robots.txt, degraded)
-- [ ] Normalise, excerpt (40 words max), dedupe, cluster, categorise, rank
-- [ ] DB schema and migrations (Drizzle, Neon)
-- [ ] `edition.yml` workflow (dry run without composing), prune
-- [ ] Tests: 40-word excerpt limit
-- [ ] Tests: URL canonicalisation
-- [ ] Tests: clustering fixture of near-duplicate headlines
-- [ ] Tests: ranking order
-- [ ] Tests: categorisation fallbacks
-- [ ] Tests: HTML sanitising
-- [ ] **Accept:** at least 6 healthy sources
+- [x] Feed probe (results in `docs/SOURCES.md`; live health logged every run)
+- [x] Ingest with etiquette (UA, conditional GET, timeout, concurrency 4, robots.txt, degraded)
+- [x] Normalise, excerpt (40 words max), dedupe, cluster, categorise, rank
+- [x] State in Blob instead of a DB (DECISIONS.md 2026-10-05)
+- [x] `edition.yml` workflow (dry run without composing), prune
+- [x] Tests: 40-word excerpt limit
+- [x] Tests: URL canonicalisation
+- [x] Tests: clustering fixture of near-duplicate headlines
+- [x] Tests: ranking order
+- [x] Tests: categorisation fallbacks
+- [x] Tests: HTML sanitising
+- [x] **Accept:** at least 6 healthy sources
 - [ ] **Accept:** 24 hours of scheduled runs without failure
 - [ ] **Accept:** `/lab/edition` (text mode) shows sensible clusters and leads
-- [ ] **Accept:** run time logged
+- [x] **Accept:** run time logged
 
 ## M3: Front page compositor
-- [ ] Six templates (front and back), OFL fonts committed
-- [ ] Text fitting with `@napi-rs/canvas`
-- [ ] Classifieds and notices generator
-- [ ] Weather ear (Open-Meteo)
-- [ ] Halftone behind `ENABLE_PHOTOS`
-- [ ] R2 upload with content-hashed names
-- [ ] Manifest with zod validation
+- [x] Six templates (front and back), OFL fonts committed
+- [x] Text fitting with `@napi-rs/canvas`
+- [x] Classifieds and notices generator
+- [x] Weather ear (Open-Meteo)
+- [x] Halftone behind `ENABLE_PHOTOS`
+- [x] Blob upload with content-hashed names (Vercel Blob, see DECISIONS.md)
+- [x] Manifest with zod validation
 - [ ] `/lab/edition` image mode
 - [ ] Masthead name collision check logged
 - [ ] **Accept:** every paper renders for 24 consecutive hourly runs with no overflow or clipping
 - [ ] **Accept:** images meet size targets (lo 60KB or less, hi 250KB or less)
-- [ ] **Accept:** manifest validation passes
+- [x] **Accept:** manifest validation passes
 - [ ] **HUMAN GATE 2:** James reviews pages (look, readability on phone, classifieds)
 
 ## M4: The Stand
-- [ ] Table, umbrella, stones, backdrop (placeholders, swappable)
-- [ ] Lighting presets by WAT hour, cross-fade
-- [ ] Seeded layout from edition date
+- [x] Table, kiosk (instead of umbrella), stones, backdrop (placeholders, swappable)
+- [x] Lighting presets by WAT hour (cross-fade within a session still to do)
+- [x] Seeded layout from edition date
 - [ ] Progressive texture loading (papers drop in)
-- [ ] State machine: STAND, PICK, HELD, TURNOVER, PUTBACK
-- [ ] Pan on narrow screens
-- [ ] History and back-button sync
-- [ ] On-demand rendering (breeze ticks at 15fps)
-- [ ] M1 paper integrated unchanged
+- [x] State machine: STAND, PICK, HELD, TURNOVER, PUTBACK
+- [x] Pan on narrow screens
+- [x] History and back-button sync
+- [x] On-demand rendering (breeze ticks at 15fps)
+- [x] M1 paper integrated unchanged
 - [ ] **Accept:** perf budget table met
-- [ ] **Accept:** back button behaves as in spec 2.7
+- [x] **Accept:** back button behaves as in spec 2.7
 - [ ] **Accept:** no texture memory leak over 20 pick/putback cycles
 - [ ] **HUMAN GATE 3:** James tests the full flow on his devices
 
@@ -83,7 +83,7 @@ Checklist from spec Section 12. One box per acceptance criterion. Gate reports a
 - [ ] READ sheet with outbound link
 - [ ] Web Share API with files, link and download fallbacks
 - [ ] OG images
-- [ ] Deep links `/p/[paper]` and `/p/[paper]/[date]`
+- [x] Deep link `/p/[paper]` (archive `/p/[paper]/[date]` still to do)
 - [ ] `/about`
 - [ ] **Accept:** sharing a front page to WhatsApp from Android shows the image
 - [ ] **Accept:** deep links open straight into HELD

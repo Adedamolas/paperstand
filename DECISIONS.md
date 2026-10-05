@@ -216,3 +216,30 @@ Judgment calls where the spec is silent or ambiguous. Newest last.
   stands: hands are implied, never shown. The grip is suggested by the side-edge pinch (a thumb
   dent with radiating wrinkles at each grip point, `pinch` in paper.config.ts), the vertical-axis
   bow, and the top corners flopping.
+
+## 2026-10-05: The stand (M4, from James's references)
+- **Kiosk instead of an umbrella:** the references show a plank kiosk with a zinc roof and papers
+  pegged on a string across its front, so that is the stand. Procedural placeholders (planks,
+  zinc, posts, string, pegs) with CC0 Poly Haven textures (`rough_wood`, `corrugated_iron`,
+  `wood_table_worn`, 512px WebP, about 80KB together). Swappable for modelled assets later.
+- **Two places papers live:** the six papers lie folded in two shingled rows on the table (each
+  partly under its right-hand neighbour, the front row over the back row's lower edge, so every
+  masthead shows), and four of them hang open on the string. Either can be picked.
+- **Pick ritual:** a covered paper first slides left out from under its neighbour (280ms), then
+  lifts in an arc toward the buyer while it unfolds and turns to face them (760ms). Put-back
+  reverses it, turning back to the front page first if the back is showing.
+- **Camera:** 40 degree FOV on the stand, pitched 31 degrees down so the pegged papers and the
+  table both show (the spec's 50 to 55 degrees assumed a table-only stand). Portrait phones see
+  about a paper and a half and swipe to pan; wide screens see the whole stand.
+- **History entry on PICK, not HELD:** pressing back mid-lift otherwise left the site, because no
+  entry had been pushed yet. Back now always puts the paper down first.
+- **Textures:** each paper's lo front and back load up front (12 small WebPs); hi textures load
+  on pointerdown/pick and are disposed when the paper is back on the table (verified in the HUD:
+  47MB held, 31.5MB back on the stand).
+- **Render on demand:** `frameloop="demand"` on the stand with 15fps breeze ticks; continuous
+  frames only while a paper is moving or held.
+- **Lint scope:** `react-hooks/immutability` is off for `src/scene/**` only, where three.js
+  objects are mutated per frame by design.
+- **Server rendering:** `/` and `/p/[paper]` fetch the manifest on the server (revalidate 60s), so
+  the edition stamp and every paper's headlines (as links to the publishers) are in the HTML.
+- **New dependency:** `server-only` (0KB client cost; build-time guard).
