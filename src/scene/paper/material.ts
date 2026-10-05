@@ -22,6 +22,7 @@ export function createPaperUniforms(front: Texture, back: Texture, grain: Textur
     uDroopEdgeRelief: { value: 0 },
     uCurl: { value: 0 },
     uCurlBottom: { value: 0.3 },
+    uPinch: { value: 0 },
     uFlapA: { value: 0 },
     uFlapPhase: { value: 0 },
     uFlapK: { value: 9 },

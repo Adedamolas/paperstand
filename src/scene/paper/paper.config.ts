@@ -21,6 +21,8 @@ export type PaperConfig = {
   curl: number;
   /** Bottom corners curl by curl * curlBottom (top corners flop the most). */
   curlBottom: number;
+  /** Wrinkle depth radiating from each thumb, plus the dent the thumb presses in. */
+  pinch: number;
 
   // Motion response
   /** Extra droop per unit of grip speed. */
@@ -76,6 +78,7 @@ const base: PaperConfig = {
   droopEdgeRelief: 0,
   curl: 0.05,
   curlBottom: 0.25,
+  pinch: 0.006,
   droopSpeed: 0.12,
   air: 0.05,
   flapImpulse: 0.05,

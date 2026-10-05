@@ -25,6 +25,7 @@ const RANGES: Partial<Record<string, [number, number, number]>> = {
   droopEdgeRelief: [0, 1, 0.01],
   curl: [-0.15, 0.15, 0.001],
   curlBottom: [-1, 1.5, 0.01],
+  pinch: [0, 0.03, 0.0005],
   droopSpeed: [0, 1, 0.01],
   air: [0, 0.3, 0.001],
   flapImpulse: [0, 0.3, 0.001],
@@ -74,7 +75,7 @@ function unflatten(flat: Flat, base: PaperConfig): PaperConfig {
 
 function schemaFor(flat: Flat) {
   const groups: Record<string, string[]> = {
-    shape: ['gripY', 'sag', 'droop', 'droopBottom', 'droopEdgeRelief', 'curl', 'curlBottom'],
+    shape: ['gripY', 'sag', 'droop', 'droopBottom', 'droopEdgeRelief', 'curl', 'curlBottom', 'pinch'],
     motion: ['droopSpeed', 'air', 'flapImpulse', 'flapK', 'flapSpeed', 'flapMax', 'dragScale', 'dragLimit', 'lagTilt', 'flickVelocity', 'tiltRange'],
     breeze: ['breeze', 'breezeScale', 'breezeSpeed'],
     'fold & turn': ['creaseRadius', 'foldClosure', 'turnCurl', 'turnMs', 'foldMs'],

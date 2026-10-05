@@ -17,6 +17,7 @@ uniform float uDroopBottom;
 uniform float uDroopEdgeRelief;
 uniform float uCurl;
 uniform float uCurlBottom;
+uniform float uPinch;
 uniform float uFlapA;
 uniform float uFlapPhase;
 uniform float uFlapK;
@@ -146,6 +147,13 @@ vec3 paperDeform(vec2 p) {
   // Corner curl: free corners flop toward the viewer, the top ones (above the hands) most.
   float corner = smoothstep(0.35, 1.0, abs(xn)) * smoothstep(0.3 * uH, 0.62 * uH, abs(t));
   disp += uCurl * held * corner * corner * (t > 0.0 ? 1.0 : uCurlBottom);
+
+  // Pinch: each thumb presses a dent into the sheet, with wrinkles radiating from it.
+  vec2 q = vec2(abs(x) - halfW, t);
+  float pr = length(q);
+  float pa = atan(q.y, q.x);
+  float ring = smoothstep(0.012, 0.045, pr) * (1.0 - smoothstep(0.05, 0.2, pr));
+  disp += uPinch * (0.8 * sin(pa * 7.0) * ring - 1.6 * exp(-pr * pr / 0.0012));
 
   // Flap: a travelling wave on the free regions.
   disp += uFlapA * held * wf * sin(uFlapK * d - uFlapPhase);

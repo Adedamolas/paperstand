@@ -210,3 +210,9 @@ Judgment calls where the spec is silent or ambiguous. Newest last.
 - Run time: 81.5s locally for a full edition (spec budget 120s).
 - Fonts are static TTF cuts (Oswald and Source Serif 4 from their upstream repos) because the
   canvas renderer does not reliably select weights from variable fonts.
+
+## 2026-10-05: No hands (James)
+- Stylised hands were built and shown, and James asked for them to be removed. The spec's rule
+  stands: hands are implied, never shown. The grip is suggested by the side-edge pinch (a thumb
+  dent with radiating wrinkles at each grip point, `pinch` in paper.config.ts), the vertical-axis
+  bow, and the top corners flopping.

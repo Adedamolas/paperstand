@@ -169,6 +169,7 @@ function step(
   u.uDroopEdgeRelief.value = cfg.droopEdgeRelief;
   u.uCurl.value = cfg.curl * held;
   u.uCurlBottom.value = cfg.curlBottom;
+  u.uPinch.value = cfg.pinch * held;
   u.uFlapA.value = flap.x * held;
   u.uFlapPhase.value = sim.phase;
   u.uFlapK.value = cfg.flapK;
