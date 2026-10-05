@@ -4,7 +4,7 @@ import { useFrame } from '@react-three/fiber';
 import { useEffect, useMemo, useRef, type RefObject } from 'react';
 import { MathUtils, type Mesh, type PerspectiveCamera, type ShaderMaterial, type Texture } from 'three';
 import { createPaperGeometry } from './geometry';
-import { createPaperMaterial, createPaperUniforms, PAPER_H, PAPER_W, type PaperUniforms } from './material';
+import { applyLighting, createPaperMaterial, createPaperUniforms, PAPER_H, PAPER_W, type PaperUniforms } from './material';
 import type { PaperConfig } from './paper.config';
 import { Spring, Spring2, Tween } from './springs';
 
@@ -68,16 +68,24 @@ type Props = {
   back: Texture;
   grain: Texture;
   segments: [number, number];
+  /** Time-of-day lighting for the paper shader; the lab uses the shader's defaults. */
+  lighting?: Parameters<typeof applyLighting>[1];
+  /** Lab only: folding also lays the paper back along an arc, previewing PICK/PUTBACK. */
+  arc?: boolean;
 };
 
-export function Paper({ controls, config, front, back, grain, segments }: Props) {
+export function Paper({ controls, config, front, back, grain, segments, lighting, arc = true }: Props) {
   const mesh = useRef<Mesh>(null);
 
   const geometry = useMemo(
     () => createPaperGeometry(PAPER_W, PAPER_H, segments[0], segments[1]),
     [segments],
   );
-  const uniforms = useMemo(() => createPaperUniforms(front, back, grain), [front, back, grain]);
+  const uniforms = useMemo(() => {
+    const u = createPaperUniforms(front, back, grain);
+    if (lighting) applyLighting(u, lighting);
+    return u;
+  }, [front, back, grain, lighting]);
   const material = useMemo(() => createPaperMaterial(uniforms), [uniforms]);
   useEffect(() => () => geometry.dispose(), [geometry]);
   useEffect(() => () => material.dispose(), [material]);
@@ -91,7 +99,7 @@ export function Paper({ controls, config, front, back, grain, segments }: Props)
     const u = (m.material as ShaderMaterial).uniforms as unknown as PaperUniforms;
     const camera = state.camera as PerspectiveCamera;
     const size = state.size;
-    step(sim, u, m, camera, size.height, controls, config.current, rawDt);
+    step(sim, u, m, camera, size.height, controls, config.current, rawDt, arc);
   });
 
   return <mesh ref={mesh} geometry={geometry} material={material} frustumCulled={false} />;
@@ -121,6 +129,7 @@ function step(
   controls: PaperControls,
   cfg: PaperConfig,
   rawDt: number,
+  arc: boolean,
 ) {
   const dt = Math.min(rawDt, 1 / 30);
   if (!sim.primed) {
@@ -202,8 +211,10 @@ function step(
   } else {
     m.scale.setScalar(1);
   }
-  const arc = Math.sin(fold * Math.PI) * 0.12;
-  m.position.y += -fold * 0.28 + arc;
-  m.position.z += -fold * 0.9;
-  m.rotation.x += -fold * 0.95;
+  if (arc) {
+    const lift = Math.sin(fold * Math.PI) * 0.12;
+    m.position.y += -fold * 0.28 + lift;
+    m.position.z += -fold * 0.9;
+    m.rotation.x += -fold * 0.95;
+  }
 }

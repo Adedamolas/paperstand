@@ -1,0 +1,42 @@
+.main {
+  position: fixed;
+  inset: 0;
+}
+
+.skeleton {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: linear-gradient(180deg, #e9d9bd 0%, #cdb08a 55%, #6b5038 56%, #3e2c1e 100%);
+}
+
+.roof {
+  position: absolute;
+  top: 0;
+  left: -10%;
+  right: -10%;
+  height: 14%;
+  background: repeating-linear-gradient(90deg, #8d8a84 0 14px, #6f6c66 14px 22px);
+}
+
+.table {
+  position: absolute;
+  left: 50%;
+  bottom: 6%;
+  width: 140%;
+  height: 34%;
+  transform: translateX(-50%) perspective(700px) rotateX(48deg);
+  transform-origin: 50% 100%;
+  background: repeating-linear-gradient(90deg, hsl(var(--wood)) 0 18%, hsl(var(--wood-dark)) 18% 18.6%);
+}
+
+.empty {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  top: 40%;
+  margin: 0;
+  color: hsl(var(--newsprint));
+  font-size: 15px;
+  text-align: center;
+}

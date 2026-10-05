@@ -62,3 +62,13 @@ export function createPaperMaterial(uniforms: PaperUniforms) {
     side: DoubleSide,
   });
 }
+
+/** Point a paper's lighting uniforms at a time-of-day preset (spec 2.9). */
+export function applyLighting(u: PaperUniforms, l: { sunDir: Vector3; sunColor: Color; sunIntensity: number; sky: Color; ground: Color; hemiIntensity: number }) {
+  u.uLightDir.value.copy(l.sunDir);
+  // Paper reads as paper under any sky: tints are kept gentle by mixing toward white.
+  const white = new Color(1, 1, 1);
+  u.uLightColor.value.copy(l.sunColor).lerp(white, 0.35).multiplyScalar(0.36 * l.sunIntensity);
+  u.uSky.value.copy(l.sky).lerp(white, 0.55).multiplyScalar(0.62 * l.hemiIntensity);
+  u.uGround.value.copy(l.ground).lerp(white, 0.3).multiplyScalar(0.42 * l.hemiIntensity);
+}
