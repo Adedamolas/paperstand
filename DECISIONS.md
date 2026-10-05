@@ -153,3 +153,60 @@ Judgment calls where the spec is silent or ambiguous. Newest last.
 - **FontFace family names** are plain identifiers (`PaperstandBody` etc.): Firefox parses the
   family as CSS and threw a SyntaxError on "Source Serif 4". Fonts that fail to load now fall back
   to system fonts instead of breaking the page.
+
+## 2026-10-05: Upgrade direction (James, after reviewing the lab with references)
+- James added `references/` (Nigerian kiosks with papers pegged on strings, fanned table stacks,
+  a side-held open paper, PM News 2001, New Nigerian 1970, The Guardian 2016) and asked for real,
+  up-to-date news, a real stand, the unstack-lift-unfold pick ritual, and a side grip that reads.
+- **Order of work:** real news first (M2 + M3 pulled forward), then the hold, then the stand
+  (M4). People around the stand come later as flat cut-out figures.
+- **Held paper:** front and back only, as the spec's v1 (James).
+
+## 2026-10-05: Vercel Blob instead of Cloudflare R2 + Neon (James)
+- **Decision:** one public Vercel Blob store, `paperstand-editions` (lhr1, closest to Lagos).
+  Page images are content-hashed (`pages/{sha256-16}.webp`, `max-age=31536000, immutable`);
+  manifests at `editions/latest.json` and `editions/{date}.json` (`max-age=60`).
+- **No database:** the pipeline keeps its state (feed ETags, failure counts, robots.txt, a 48-hour
+  article window, revisions, edition file lists) as `state/pipeline.json` in the same store.
+  Clustering only needs 36 hours, so a 48-hour window replaces the spec's 14-day article table.
+- **Why:** James chose to ship real news today rather than wait on new accounts. R2 stays the
+  plan if bandwidth at viral scale makes Blob expensive.
+- **Dependency cost:** `@vercel/blob` runs only in the pipeline; the client fetches plain URLs.
+
+## 2026-10-05: Pages drawn with @napi-rs/canvas, not Satori + resvg
+- **Decision:** the compositor draws pages directly with `@napi-rs/canvas` (already in the spec's
+  pipeline deps for measuring) and converts with sharp. `satori` and `@resvg/resvg-js` are not used.
+- **Why:** the spec measures text with canvas because Satori cannot; Satori then wraps text by its
+  own rules, so measurement and render can disagree. Drawing with the measuring canvas makes them
+  identical, supports justified columns and halftone dots directly, and is simpler.
+
+## 2026-10-05: Photos on, halftoned (James's Section 15 answer)
+- Lead photos only, fetched from the feed's media tags, grayscale, 45 degree halftone screen,
+  "Photo: {Source}" credit. Suppressed for violence or tragedy keywords in headline or excerpt.
+  Publisher logos posing as item images are filtered out.
+
+## 2026-10-05: Feed handling details
+- **Redirected category feeds are not trusted:** Punch redirects its topic feeds to its general
+  feed for our user agent, which mislabelled general news as entertainment. A redirected
+  category feed is categorised like a main feed.
+- **Section tags only:** feed tags include people and places; only short section-style tags
+  decide the category. When one story arrives from several feeds, the best-founded category wins.
+- **Headline labels:** "BREAKING:", "JUST IN -", "| Watch Trailer" are dropped from headlines.
+  The headline's own words are never changed (hard rule 4.6.3).
+- **Excerpts:** "Read More: <url>" and "The post ... appeared first on ..." are stripped before the
+  40-word cut.
+
+## 2026-10-05: Page design and budgets
+- Old Nigerian daily look from the references: yellowed stock, black ink with one spot colour,
+  index strip, masthead ears (real Lagos weather from Open-Meteo, price, edition number), a huge
+  Anton banner, standfirst in bold serif, justified excerpts with source lines and "Cont'd on
+  page X", a briefs row, three fictional notices and a fictional ad. A footer states that the
+  paper is fictional and every story links to its publisher.
+- Stories flow down columns until full (no fixed slot sizes), so pages stay crowded.
+- Image sizes after tuning (WebP q70 hi, q62 lo): fronts 214 to 301KB hi, 49 to 61KB lo; backs
+  with a halftone photo 335 to 382KB hi, 63 to 73KB lo. Fronts meet the spec targets; photo backs
+  are about 40% over the 250KB hi target because halftone dots compress poorly. Acceptable for
+  now since only one hi texture is loaded at a time.
+- Run time: 81.5s locally for a full edition (spec budget 120s).
+- Fonts are static TTF cuts (Oswald and Source Serif 4 from their upstream repos) because the
+  canvas renderer does not reliably select weights from variable fonts.

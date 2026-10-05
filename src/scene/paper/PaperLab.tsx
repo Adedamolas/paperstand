@@ -10,7 +10,8 @@ import { Hud } from '@/src/ui/Hud';
 import { HudProbe } from '@/src/ui/HudProbe';
 import { TiltChip } from '@/src/ui/TiltChip';
 import { HeldCamera } from '../CameraRig';
-import { createGrainTexture, createMockPages, disposePages } from './mockPage';
+import { createGrainTexture, createMockPages } from './mockPage';
+import { loadPageTextures, type PageTextures } from './pageTextures';
 import { Paper, PaperControls } from './Paper';
 import { PAPER_CONFIG, reducedMotion, type PaperConfig } from './paper.config';
 import styles from './PaperLab.module.css';
@@ -125,20 +126,21 @@ function LabScene({ tier, reduced }: { tier: 'low' | 'mid' | 'high'; reduced: bo
     config.current = unflatten(values, base);
   }, [values, base]);
 
-  const [textures, setTextures] = useState<Awaited<ReturnType<typeof createMockPages>> | null>(null);
+  const [textures, setTextures] = useState<PageTextures | null>(null);
   const grain = useMemo(() => createGrainTexture(), []);
   useEffect(() => () => grain.dispose(), [grain]);
   useEffect(() => {
     let alive = true;
-    let made: Awaited<ReturnType<typeof createMockPages>> | null = null;
-    createMockPages(tier === 'low' ? 1024 : 1536, tierCfg.anisotropy).then((t) => {
+    let made: PageTextures | null = null;
+    const q = new URLSearchParams(window.location.search);
+    loadPageTextures({ slug: q.get('paper') ?? 'lantern', lowTier: tier === 'low', anisotropy: tierCfg.anisotropy, mock: q.get('mock') === '1' }).then((t) => {
       made = t;
       if (alive) setTextures(t);
-      else disposePages(t);
+      else t.dispose();
     });
     return () => {
       alive = false;
-      if (made) disposePages(made);
+      made?.dispose();
     };
   }, [tier, tierCfg.anisotropy]);
 
@@ -204,6 +206,7 @@ function LabScene({ tier, reduced }: { tier: 'low' | 'mid' | 'high'; reduced: bo
       <div className={styles.bar}>
         <TiltChip onTilt={onTilt} />
         <span className={styles.hint}>
+          {textures?.paper ? `${textures.paper.title}, today. ` : textures ? 'Specimen page. ' : 'Loading today\u2019s paper. '}
           Drag to move. Flick up to turn over. Swipe down to put back, tap to pick up.
           {copied ? ' Config copied.' : ''}
         </span>
